@@ -19,6 +19,7 @@ public:
     bool Open(std::wstring* error);
     void Close();
     bool IsOpen() const { return handle_ != INVALID_HANDLE_VALUE; }
+    bool IsConnected();
     bool Send(Command command, const std::uint8_t* payload, std::uint8_t length, std::wstring* error);
     const std::wstring& Path() const { return path_; }
 

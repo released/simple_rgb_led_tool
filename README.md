@@ -6,6 +6,9 @@ The primary `Control` tab connects to the companion M032TD2AE USB HID
 firmware. It controls 1-10 WS2812 (GRB) or LTST-E563CEGBW (RGB) LEDs,
 brightness, static color, breathing, blink, gradient, and flow. The existing
 editor and code generator are retained in the compact `Pattern / Code` tab.
+While connected, the tool checks device presence every 500 ms. Unplugging the
+USB cable closes the stale HID handle, changes Status to `Disconnected`, and
+re-enables the Connect button without requiring a failed command first.
 
 The Control tab provides numeric fields and sliders for Speed and RGB values,
 plus `Choose color...` for the native Windows visual color picker. A selected

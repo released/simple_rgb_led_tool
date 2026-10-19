@@ -6,9 +6,16 @@
 #include "../resource.h"
 #include "layout_utils.h"
 
+namespace {
+constexpr UINT_PTR kDevicePollTimerId = 1u;
+constexpr UINT kDevicePollIntervalMs = 500u;
+}
+
 BEGIN_MESSAGE_MAP(CControlTab, CWnd)
     ON_WM_CREATE()
+    ON_WM_DESTROY()
     ON_WM_SIZE()
+    ON_WM_TIMER()
     ON_BN_CLICKED(IDC_CONTROL_CONNECT, &CControlTab::OnConnect)
     ON_BN_CLICKED(IDC_CONTROL_DISCONNECT, &CControlTab::OnDisconnect)
     ON_BN_CLICKED(IDC_CONTROL_SEND_CONFIG, &CControlTab::OnSendConfig)
@@ -93,10 +100,24 @@ int CControlTab::OnCreate(LPCREATESTRUCT create_struct) {
     red_edit_.LimitText(3); green_edit_.LimitText(3); blue_edit_.LimitText(3); speed_edit_.LimitText(3);
     UpdateEffectUi();
     UpdateConnectionUi();
+    SetTimer(kDevicePollTimerId, kDevicePollIntervalMs, nullptr);
     return 0;
 }
 
+void CControlTab::OnDestroy() {
+    KillTimer(kDevicePollTimerId);
+    CWnd::OnDestroy();
+}
+
 void CControlTab::OnSize(UINT type, int cx, int cy) { CWnd::OnSize(type, cx, cy); LayoutControls(cx, cy); }
+
+void CControlTab::OnTimer(UINT_PTR timer_id) {
+    if (timer_id == kDevicePollTimerId && device_.IsOpen() && !device_.IsConnected()) {
+        if (log_) log_(L"USB HID device removed.");
+        UpdateConnectionUi();
+    }
+    CWnd::OnTimer(timer_id);
+}
 
 void CControlTab::LayoutControls(int cx, int cy) {
     if (cx < 200 || cy < 120) return;

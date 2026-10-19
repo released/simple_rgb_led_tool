@@ -18,6 +18,32 @@ std::wstring LastErrorText(const wchar_t* operation) {
     if (detail != nullptr) { text += L": "; text += detail; LocalFree(detail); }
     return text;
 }
+
+bool IsHidPathPresent(const std::wstring& expected_path) {
+    GUID guid{};
+    HidD_GetHidGuid(&guid);
+    HDEVINFO info = SetupDiGetClassDevsW(&guid, nullptr, nullptr, DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
+    if (info == INVALID_HANDLE_VALUE) return false;
+
+    SP_DEVICE_INTERFACE_DATA iface{};
+    iface.cbSize = sizeof(iface);
+    bool present = false;
+    for (DWORD index = 0; SetupDiEnumDeviceInterfaces(info, nullptr, &guid, index, &iface); ++index) {
+        DWORD required = 0;
+        SetupDiGetDeviceInterfaceDetailW(info, &iface, nullptr, 0, &required, nullptr);
+        if (required == 0) continue;
+        std::vector<std::uint8_t> storage(required);
+        auto* detail = reinterpret_cast<SP_DEVICE_INTERFACE_DETAIL_DATA_W*>(storage.data());
+        detail->cbSize = sizeof(SP_DEVICE_INTERFACE_DETAIL_DATA_W);
+        if (SetupDiGetDeviceInterfaceDetailW(info, &iface, detail, required, nullptr, nullptr) &&
+            _wcsicmp(detail->DevicePath, expected_path.c_str()) == 0) {
+            present = true;
+            break;
+        }
+    }
+    SetupDiDestroyDeviceInfoList(info);
+    return present;
+}
 }
 
 HidDevice::~HidDevice() { Close(); }
@@ -60,6 +86,15 @@ void HidDevice::Close() {
     if (handle_ != INVALID_HANDLE_VALUE) CloseHandle(handle_);
     handle_ = INVALID_HANDLE_VALUE;
     path_.clear();
+}
+
+bool HidDevice::IsConnected() {
+    if (!IsOpen()) return false;
+    if (!IsHidPathPresent(path_)) {
+        Close();
+        return false;
+    }
+    return true;
 }
 
 bool HidDevice::Send(Command command, const std::uint8_t* payload, std::uint8_t length, std::wstring* error) {

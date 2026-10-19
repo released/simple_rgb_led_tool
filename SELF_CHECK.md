@@ -3,6 +3,7 @@
 ## Static Checks
 
 - Confirm the Control tab uses native Windows HID for VID 0416 / PID 0125.
+- Confirm unplugging the connected USB device changes Status to `Disconnected` within approximately one second and logs one removal message.
 - Confirm the USB protocol document marks `GET_INFO` reserved/no-response and lists exact payload lengths for commands `0x01..0x06`.
 - Confirm Wire order, Effect, and Direction combo boxes expand and can be reached with keyboard Tab navigation.
 - Confirm Red/Green/Blue clamp to 0-255 and Speed clamps to 1-255, with edit/slider values synchronized.

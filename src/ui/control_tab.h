@@ -18,7 +18,9 @@ public:
 
 protected:
     afx_msg int OnCreate(LPCREATESTRUCT create_struct);
+    afx_msg void OnDestroy();
     afx_msg void OnSize(UINT type, int cx, int cy);
+    afx_msg void OnTimer(UINT_PTR timer_id);
     afx_msg void OnConnect();
     afx_msg void OnDisconnect();
     afx_msg void OnSendConfig();

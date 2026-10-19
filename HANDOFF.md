@@ -5,6 +5,7 @@
 - The project is a standalone MFC RGB LED controller and pattern editor.
 - The repository uses `src`, `scripts`, `docs`, and `demo_code` directories.
 - The primary Control tab can connect to VID 0416 / PID 0125 and send live strip configuration and effect commands.
+- Connected HID device presence is polled every 500 ms; cable removal closes the stale handle and updates the UI to `Disconnected`.
 - Control-tab Wire order, Effect, and Direction combo boxes reserve a full drop-list height and support keyboard tab navigation.
 - Control-tab Speed and RGB values have synchronized numeric fields/sliders with clamped ranges. Effect selection enables only relevant inputs and explains color behavior.
 - Control-tab `Choose color...` opens the native full visual color picker and synchronizes the selected color to all RGB numeric fields/sliders.
