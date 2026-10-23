@@ -1,5 +1,64 @@
 # SELF_CHECK
 
+## Rainbow Fill Animation Fix 2026-10-24
+
+- Static check: PASS; Rainbow Fill transforms every frame and scales the
+  rainbow by the original per-LED intensity relative to the pattern peak.
+- Release x64 build `1.0.0.042`: PASS, 0 warnings, 0 errors.
+- Startup smoke: PASS; responsive main window and normal close.
+- Breathing/Rainbow Fill visual click-through: NOT RUN.
+
+## Applied Layout/Preset Status And Reset Color Fix 2026-10-24
+
+- Build artifact: PASS, version `1.0.0.041`; MSBuild unsuccessful flag absent.
+- Startup smoke: PASS.
+- Static check: PASS; Apply/Load status derives from the active pattern.
+- Static check: PASS; Reset selects LED 0 before and after default pattern load,
+  then refreshes RGB fields, preserving the default orange primary color.
+- Reset/Breathing/Rainbow Fill visual click-through: NOT RUN.
+
+## Pattern Reset 2026-10-24
+
+- Release x64 build: PASS, version `1.0.0.040`, 0 warnings, 0 errors.
+- Static check: PASS; Reset kills the preview timer, clears playing state,
+  loads default Pattern / Code state, restores 1x preview speed, and refreshes
+  playback controls.
+- Reset click-through: NOT RUN.
+
+## Pattern / Code Groups 2026-10-24
+
+- Release x64 build: PASS, version `1.0.0.039`, 0 warnings, 0 errors.
+- Startup smoke: PASS.
+- Static check: PASS; C Symbol, Output, Copy Code and Save Code are owned and
+  laid out by the Code Output group; duplicate main-frame Copy/Save controls
+  and handlers were removed.
+- Clipboard and folder-picker click-through: NOT RUN.
+
+## Offline Preset Alignment 2026-10-24
+
+- Release x64 build: PASS, current version `1.0.0.038`, 0 warnings, 0 errors.
+- Static check: PASS; Pattern / Code includes Static, Breathing, Blink,
+  Gradient, and Flow as offline frame generators and does not invoke USB.
+- Static check: PASS; old Rainbow Cycle and Breathing Blue names remain
+  accepted by the core for persisted-state compatibility.
+- Native color-picker click-through: NOT RUN; Windows computer-use native pipe
+  unavailable.
+- Preview navigation static check: PASS; Previous/Next, slider and status use
+  the current frame, while preview-speed scaling does not mutate durations.
+- Preset-parameter static check: PASS; Color 2, Tail, Fade, Spacing and Repeat
+  are passed only when Load Preset regenerates frames and persist through INI.
+
+## Pattern Preview Timing / Bottom Controls 2026-10-24
+
+- Release x64 build: PASS, output `build\RgbLedTool.exe`, current version
+  `1.0.0.033`, 0 warnings, 0 errors.
+- Startup smoke: PASS; responsive main window and normal close.
+- Duration propagation static check: PASS; user edits update all frames before
+  preview playback and generated-code refresh.
+- Bottom-row layout static check: PASS; Play and Stop split only the left
+  Pattern editor width and do not reduce or overlap the generated-code view.
+- Visual click-through: NOT RUN; Windows computer-use native pipe unavailable.
+
 ## Layout / Clean Audit 2026-10-20
 
 - Existing source layout already conforms; no application/protocol/firmware restructuring or dependencies were introduced.
@@ -23,6 +82,10 @@
 - Confirm `[CONTROL]` in the portable INI saves and restores LED count, wire order, brightness, effect, RGB, speed, and direction.
 - Confirm Static enables RGB only; Breathing/Blink enable RGB+Speed; Gradient enables RGB+Speed+Direction; Flow enables Speed+Direction and disables RGB.
 - Confirm Pattern / Code retains the existing editor and generator.
+- Confirm editing Pattern / Code `Duration(ms)` updates every frame, and that
+  Play uses the new interval across a complete multi-frame preset cycle.
+- Confirm Play and Stop share the bottom row of the left Pattern editor without
+  entering or overlapping the Preview / Generated Code column.
 - Confirm supported LED count is clamped to 1 through 64.
 - Confirm shape choices are Line, Ring, Square, and U Shape.
 - Confirm preset path choices support Start, Forward/Reverse, and Loop/Bounce.

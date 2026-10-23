@@ -24,8 +24,6 @@ protected:
     afx_msg void OnBnClickedResetIni();
     afx_msg void OnBnClickedLoadPattern();
     afx_msg void OnBnClickedSavePattern();
-    afx_msg void OnBnClickedCopyCode();
-    afx_msg void OnBnClickedSaveCode();
     afx_msg void OnBnClickedSaveLog();
     afx_msg void OnBnClickedSaveLogCheck();
     afx_msg void OnBnClickedClearLog();
@@ -58,8 +56,6 @@ private:
     CButton reset_ini_btn_;
     CButton load_pattern_btn_;
     CButton save_pattern_btn_;
-    CButton copy_code_btn_;
-    CButton save_code_btn_;
     CStatic ini_path_title_;
     CStatic ini_path_value_;
     CStatic build_info_title_;

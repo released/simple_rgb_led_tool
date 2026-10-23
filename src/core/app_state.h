@@ -21,6 +21,13 @@ struct PatternUiState {
     std::wstring direction = L"Forward";
     std::wstring path_mode = L"Loop";
     std::wstring backend = L"LLSI";
+    std::wstring color2_red = L"0";
+    std::wstring color2_green = L"0";
+    std::wstring color2_blue = L"0";
+    std::wstring tail_length = L"3";
+    std::wstring trail_fade = L"128";
+    std::wstring chase_spacing = L"3";
+    std::wstring repeat_count = L"1";
 };
 
 struct ControlUiState {

@@ -35,8 +35,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
     ON_BN_CLICKED(ID_TOP_RESET_INI_BTN, &CMainFrame::OnBnClickedResetIni)
     ON_BN_CLICKED(ID_TOP_LOAD_PATTERN_BTN, &CMainFrame::OnBnClickedLoadPattern)
     ON_BN_CLICKED(ID_TOP_SAVE_PATTERN_BTN, &CMainFrame::OnBnClickedSavePattern)
-    ON_BN_CLICKED(ID_TOP_COPY_CODE_BTN, &CMainFrame::OnBnClickedCopyCode)
-    ON_BN_CLICKED(ID_TOP_SAVE_CODE_BTN, &CMainFrame::OnBnClickedSaveCode)
     ON_BN_CLICKED(ID_LOG_SAVE_BTN, &CMainFrame::OnBnClickedSaveLog)
     ON_BN_CLICKED(ID_LOG_SAVE_CHECK, &CMainFrame::OnBnClickedSaveLogCheck)
     ON_BN_CLICKED(ID_LOG_CLEAR_BTN, &CMainFrame::OnBnClickedClearLog)
@@ -83,8 +81,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct) {
     if (!create_or_fail(reset_ini_btn_.Create(L"Reset INI", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, CRect(), this, ID_TOP_RESET_INI_BTN), L"Reset INI")) return -1;
     if (!create_or_fail(load_pattern_btn_.Create(L"Load Pattern", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, CRect(), this, ID_TOP_LOAD_PATTERN_BTN), L"Load Pattern")) return -1;
     if (!create_or_fail(save_pattern_btn_.Create(L"Save Pattern", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, CRect(), this, ID_TOP_SAVE_PATTERN_BTN), L"Save Pattern")) return -1;
-    if (!create_or_fail(copy_code_btn_.Create(L"Copy Code", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, CRect(), this, ID_TOP_COPY_CODE_BTN), L"Copy Code")) return -1;
-    if (!create_or_fail(save_code_btn_.Create(L"Save Code", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, CRect(), this, ID_TOP_SAVE_CODE_BTN), L"Save Code")) return -1;
     if (!create_or_fail(ini_path_title_.Create(L"INI:", WS_CHILD | WS_VISIBLE, CRect(), this, ID_TOP_INI_PATH_TITLE), L"INI path title")) return -1;
     if (!create_or_fail(ini_path_value_.Create(L"-", WS_CHILD | WS_VISIBLE | SS_PATHELLIPSIS, CRect(), this, ID_TOP_INI_PATH_VALUE), L"INI path value")) return -1;
     if (!create_or_fail(build_info_title_.Create(L"Build:", WS_CHILD | WS_VISIBLE, CRect(), this, ID_TOP_BUILD_INFO_TITLE), L"Build info title")) return -1;
@@ -105,7 +101,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 
     const std::array<CWnd*, 19> controls = {
         &save_ini_btn_, &load_ini_btn_, &reset_ini_btn_, &load_pattern_btn_, &save_pattern_btn_,
-        &copy_code_btn_, &save_code_btn_, &ini_path_title_, &ini_path_value_, &build_info_title_,
+        &ini_path_title_, &ini_path_value_, &build_info_title_,
         &build_info_value_, &tab_ctrl_, &save_log_check_, &save_log_btn_, &clear_log_btn_,
         &log_edit_, &control_tab_, &rgb_tab_, nullptr
     };
@@ -167,10 +163,6 @@ void CMainFrame::LayoutControls(int cx, int cy) {
     mfc_tool::ui::SafeMoveWindow(load_pattern_btn_, x, y, btn_w, row_h);
     x += btn_w + gap;
     mfc_tool::ui::SafeMoveWindow(save_pattern_btn_, x, y, btn_w, row_h);
-    x += btn_w + 14;
-    mfc_tool::ui::SafeMoveWindow(copy_code_btn_, x, y, 96, row_h);
-    x += 96 + gap;
-    mfc_tool::ui::SafeMoveWindow(save_code_btn_, x, y, 96, row_h);
 
     y += row_h + gap;
     x = margin;
@@ -208,7 +200,7 @@ void CMainFrame::UpdateTabVisibility() {
     const bool editor = tab_ctrl_.GetCurSel() == 1;
     control_tab_.ShowWindow(editor ? SW_HIDE : SW_SHOW);
     rgb_tab_.ShowWindow(editor ? SW_SHOW : SW_HIDE);
-    CWnd* editor_controls[] = {&load_pattern_btn_, &save_pattern_btn_, &copy_code_btn_, &save_code_btn_};
+    CWnd* editor_controls[] = {&load_pattern_btn_, &save_pattern_btn_};
     for (CWnd* control : editor_controls) control->ShowWindow(editor ? SW_SHOW : SW_HIDE);
 }
 
@@ -401,28 +393,6 @@ void CMainFrame::OnBnClickedSavePattern() {
         }
         state_.ui.last_pattern_path = path;
         AppendLog(L"Pattern saved: " + path);
-    }
-}
-
-void CMainFrame::OnBnClickedCopyCode() {
-    if (!rgb_tab_.CopyCodeToClipboard()) {
-        ShowErrorBox(L"Copy Code", L"Clipboard copy failed.");
-        return;
-    }
-    AppendLog(L"Generated code copied to clipboard.");
-}
-
-void CMainFrame::OnBnClickedSaveCode() {
-    CFolderPickerDialog dlg(nullptr, 0, this);
-    if (dlg.DoModal() == IDOK) {
-        std::wstring error;
-        const std::wstring path = dlg.GetPathName().GetString();
-        if (!rgb_tab_.SaveGeneratedCodeToFolder(path, &error)) {
-            ShowErrorBox(L"Save Code Error", error);
-            return;
-        }
-        state_.ui.last_code_path = path;
-        AppendLog(L"Generated MCU source files saved: " + path);
     }
 }
 

@@ -81,7 +81,13 @@ RgbPattern MakePreset(
     LedShape shape,
     int start_index = 0,
     LedDirection direction = LedDirection::Forward,
-    LedPathMode path_mode = LedPathMode::Loop
+    LedPathMode path_mode = LedPathMode::Loop,
+    RgbColor primary = RgbColor{255u, 80u, 0u},
+    RgbColor secondary = RgbColor{0u, 0u, 0u},
+    int tail_length = 3,
+    int trail_fade = 128,
+    int chase_spacing = 3,
+    int repeat_count = 1
 );
 void EnsurePatternShape(RgbPattern* pattern, int led_count, LedShape shape);
 void ApplyPatternPathSettings(

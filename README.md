@@ -57,15 +57,36 @@ A folder name such as `tests` or `obj` is not permission to erase its contents.
   - rainbow fill
   - shift left/right
   - add, duplicate, and delete frames
+- Editing `Duration(ms)` applies the interval to every frame in the current
+  pattern, so preview playback and generated MCU frame tables use the same
+  speed. Loaded pattern files retain their per-frame durations until this
+  field is edited.
+- Play and Stop share the bottom row of the left Pattern editor only; they do
+  not extend into the Preview or Generated MCU Source Bundle area.
 - Presets:
+  - Static
+  - Breathing
+  - Blink
+  - Gradient
+  - Flow (Rainbow)
   - Moving Dot
-  - Rainbow Cycle
   - Theater Chase
-  - Color Wipe Red
-  - Breathing Blue
+  - Color Wipe
+  - Blue Comet
   - Alert Alternating
   - Solid Red/Green/Blue/White
   - Off
+- Pattern presets use the RGB editor as their primary color; `Choose color...`
+  opens the native visual picker before `Load Preset`. Static, Breathing,
+  Blink, Gradient, and Flow mirror the Control-tab effect concepts while still
+  generating ordinary offline frame tables.
+- Preview navigation provides Previous/Next, a draggable frame-position slider,
+  `Frame n / total` status, and 0.25x/0.5x/1x/2x/4x preview speed. Preview
+  speed does not modify frame durations or generated MCU code.
+- Preset generation also supports Color 2, Tail Length, Trail Fade (1-255),
+  Chase Spacing and Repeat Count. Blink uses Color 1/2, Gradient uses Color 2
+  as its background, Theater Chase uses spacing/repeat, and Blue Comet uses
+  tail/fade. These settings are persisted in the portable INI.
 - Pattern file load/save with `.rgbpat`.
 - Generated MCU source bundle with frame tables, a pattern player, and a backend-specific LED driver.
 - Output backends:
@@ -96,6 +117,26 @@ A folder name such as `tests` or `obj` is not permission to erase its contents.
    - GPIO pin macros, when using GPIO backend
 
 If the BSP already owns these macros, define them before including the generated driver header; otherwise the generated defaults are used.
+
+The Pattern / Code tab separates the left side into `Pattern Editor` and
+`Code Output` groups. C Symbol, Output backend, Copy Code, and Save Code are
+contained in Code Output; Save Code opens a folder picker and writes the
+backend-specific source bundle.
+
+The bottom Pattern Editor row contains Play, Stop, and Reset. Reset stops
+preview playback and restores all Pattern / Code settings, including layout,
+preset, path, colors, generation parameters, duration, preview speed, C Symbol,
+and output backend. It does not alter the Control tab or USB connection.
+
+The layout and preset rows use short Apply and Load buttons. Read-only status
+text beside them reports the actually applied layout and loaded preset, so a
+combo-box selection is not mistaken for an applied change.
+
+`Rainbow Fill` applies a rainbow palette to every frame, not only the selected
+frame. It preserves each LED's existing relative brightness, so applying it to
+Breathing produces a full-ring rainbow breathing animation instead of a brief
+rainbow frame followed by single-color frames. An entirely black pattern is
+filled at full rainbow brightness.
 
 If a target BSP keeps project-wide LED definitions in a configuration header,
 define those macros before including the generated driver header.

@@ -82,7 +82,14 @@ mfc_tool::config::IniData AppState::ToIniData(const std::wstring& ini_path) cons
         {L"start_index", pattern.start_index},
         {L"direction", pattern.direction},
         {L"path_mode", pattern.path_mode},
-        {L"backend", pattern.backend}
+        {L"backend", pattern.backend},
+        {L"color2_red", pattern.color2_red},
+        {L"color2_green", pattern.color2_green},
+        {L"color2_blue", pattern.color2_blue},
+        {L"tail_length", pattern.tail_length},
+        {L"trail_fade", pattern.trail_fade},
+        {L"chase_spacing", pattern.chase_spacing},
+        {L"repeat_count", pattern.repeat_count}
     };
 
     out[L"CONTROL"] = {
@@ -113,6 +120,13 @@ void AppState::ApplyIniData(const mfc_tool::config::IniData& data) {
     pattern.direction = GetValue(data, L"PATTERN", L"direction", pattern.direction);
     pattern.path_mode = GetValue(data, L"PATTERN", L"path_mode", pattern.path_mode);
     pattern.backend = GetValue(data, L"PATTERN", L"backend", pattern.backend);
+    pattern.color2_red = GetValue(data, L"PATTERN", L"color2_red", pattern.color2_red);
+    pattern.color2_green = GetValue(data, L"PATTERN", L"color2_green", pattern.color2_green);
+    pattern.color2_blue = GetValue(data, L"PATTERN", L"color2_blue", pattern.color2_blue);
+    pattern.tail_length = GetValue(data, L"PATTERN", L"tail_length", pattern.tail_length);
+    pattern.trail_fade = GetValue(data, L"PATTERN", L"trail_fade", pattern.trail_fade);
+    pattern.chase_spacing = GetValue(data, L"PATTERN", L"chase_spacing", pattern.chase_spacing);
+    pattern.repeat_count = GetValue(data, L"PATTERN", L"repeat_count", pattern.repeat_count);
 
     control.led_count = GetValue(data, L"CONTROL", L"led_count", control.led_count);
     control.order = GetValue(data, L"CONTROL", L"order", control.order);

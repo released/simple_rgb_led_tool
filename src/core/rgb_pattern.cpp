@@ -367,11 +367,15 @@ LedOutputBackend ParseBackendName(const std::wstring& text) {
 
 std::vector<std::wstring> PresetNames() {
     return {
+        L"Static",
+        L"Breathing",
+        L"Blink",
+        L"Gradient",
+        L"Flow (Rainbow)",
         L"Moving Dot",
-        L"Rainbow Cycle",
         L"Theater Chase",
-        L"Color Wipe Red",
-        L"Breathing Blue",
+        L"Color Wipe",
+        L"Blue Comet",
         L"Alert Alternating",
         L"Solid Red",
         L"Solid Green",
@@ -470,7 +474,13 @@ RgbPattern MakePreset(
     LedShape shape,
     int start_index,
     LedDirection direction,
-    LedPathMode path_mode
+    LedPathMode path_mode,
+    RgbColor primary,
+    RgbColor secondary,
+    int tail_length,
+    int trail_fade,
+    int chase_spacing,
+    int repeat_count
 ) {
     const int count = ClampInt(led_count, kMinLedCount, kMaxLedCount);
     const std::wstring name = preset_name.empty() ? L"Moving Dot" : preset_name;
@@ -479,6 +489,10 @@ RgbPattern MakePreset(
     const std::vector<int> motion_path = BuildMotionLedPath(count, safe_start, direction, path_mode);
     RgbPattern pattern;
     int i = 0;
+    tail_length = ClampInt(tail_length, 1, count);
+    trail_fade = ClampInt(trail_fade, 1, 255);
+    chase_spacing = ClampInt(chase_spacing, 1, count);
+    repeat_count = ClampInt(repeat_count, 1, 16);
 
     if (name == L"Solid Red") {
         return MakeSolid(name, count, shape, RgbColor{255u, 0u, 0u}, safe_start, direction, path_mode);
@@ -503,7 +517,47 @@ RgbPattern MakePreset(
     pattern.direction = direction;
     pattern.path_mode = path_mode;
 
-    if (name == L"Rainbow Cycle") {
+    if (name == L"Static") {
+        return MakeSolid(name, count, shape, primary, safe_start, direction, path_mode);
+    }
+
+    if (name == L"Breathing") {
+        for (i = 0; i < 32; ++i) {
+            const int level = (i < 16) ? i * 17 : (31 - i) * 17;
+            pattern.frames.push_back(MakeFrame(count, 55u, RgbColor{
+                static_cast<std::uint8_t>((static_cast<unsigned int>(primary.r) * level) / 255u),
+                static_cast<std::uint8_t>((static_cast<unsigned int>(primary.g) * level) / 255u),
+                static_cast<std::uint8_t>((static_cast<unsigned int>(primary.b) * level) / 255u)}));
+        }
+        return pattern;
+    }
+
+    if (name == L"Blink") {
+        for (i = 0; i < repeat_count; ++i) {
+            pattern.frames.push_back(MakeFrame(count, 250u, primary));
+            pattern.frames.push_back(MakeFrame(count, 250u, secondary));
+        }
+        return pattern;
+    }
+
+    if (name == L"Gradient") {
+        for (i = 0; i < 16; ++i) {
+            PatternFrame frame = MakeFrame(count, 70u, secondary);
+            int led = 0;
+            for (led = 0; led < count; ++led) {
+                const int phase = ((led * 256) / (std::max)(1, count) + i * 16) & 255;
+                const int level = (phase < 128) ? phase * 2 : (255 - phase) * 2;
+                frame.leds[static_cast<size_t>(loop_order[static_cast<size_t>(led)])] = RgbColor{
+                    static_cast<std::uint8_t>((static_cast<unsigned int>(primary.r) * level) / 255u),
+                    static_cast<std::uint8_t>((static_cast<unsigned int>(primary.g) * level) / 255u),
+                    static_cast<std::uint8_t>((static_cast<unsigned int>(primary.b) * level) / 255u)};
+            }
+            pattern.frames.push_back(frame);
+        }
+        return pattern;
+    }
+
+    if (name == L"Flow (Rainbow)" || name == L"Rainbow Cycle") {
         for (i = 0; i < 16; ++i) {
             AddRainbowFrame(&pattern, i, 16);
         }
@@ -511,12 +565,12 @@ RgbPattern MakePreset(
     }
 
     if (name == L"Theater Chase") {
-        for (i = 0; i < 6; ++i) {
+        for (i = 0; i < chase_spacing * repeat_count; ++i) {
             PatternFrame frame = MakeFrame(count, 90u, RgbColor{0u, 0u, 0u});
             int led = 0;
             for (led = 0; led < count; ++led) {
-                if (((led + i) % 3) == 0) {
-                    frame.leds[static_cast<size_t>(loop_order[static_cast<size_t>(led)])] = RgbColor{255u, 80u, 0u};
+                if (((led + i) % chase_spacing) == 0) {
+                    frame.leds[static_cast<size_t>(loop_order[static_cast<size_t>(led)])] = primary;
                 }
             }
             pattern.frames.push_back(frame);
@@ -524,27 +578,34 @@ RgbPattern MakePreset(
         return pattern;
     }
 
-    if (name == L"Color Wipe Red") {
+    if (name == L"Color Wipe" || name == L"Color Wipe Red") {
         for (i = 0; i <= static_cast<int>(motion_path.size()); ++i) {
             PatternFrame frame = MakeFrame(count, 55u, RgbColor{0u, 0u, 0u});
             int led = 0;
             for (led = 0; led < i && led < static_cast<int>(motion_path.size()); ++led) {
-                frame.leds[static_cast<size_t>(motion_path[static_cast<size_t>(led)])] = RgbColor{255u, 0u, 0u};
+                frame.leds[static_cast<size_t>(motion_path[static_cast<size_t>(led)])] = primary;
             }
             pattern.frames.push_back(frame);
         }
         return pattern;
     }
 
-    if (name == L"Breathing Blue") {
+    if (name == L"Blue Comet" || name == L"Breathing Blue") {
         for (i = 0; i < static_cast<int>(motion_path.size()); ++i) {
             PatternFrame frame = MakeFrame(count, 55u, RgbColor{0u, 0u, 0u});
-            const int previous = (i == 0) ? static_cast<int>(motion_path.size()) - 1 : i - 1;
-            const int next = (i + 1 >= static_cast<int>(motion_path.size())) ? 0 : i + 1;
+            int tail = 0;
             if (!motion_path.empty()) {
-                frame.leds[static_cast<size_t>(motion_path[static_cast<size_t>(previous)])] = RgbColor{0u, 0u, 48u};
-                frame.leds[static_cast<size_t>(motion_path[static_cast<size_t>(i)])] = RgbColor{0u, 0u, 255u};
-                frame.leds[static_cast<size_t>(motion_path[static_cast<size_t>(next)])] = RgbColor{0u, 0u, 96u};
+                for (tail = 0; tail < tail_length; ++tail) {
+                    const int path_index = (i - tail + static_cast<int>(motion_path.size())) %
+                                           static_cast<int>(motion_path.size());
+                    int level = 255;
+                    int step = 0;
+                    for (step = 0; step < tail; ++step) level = (level * trail_fade) / 255;
+                    frame.leds[static_cast<size_t>(motion_path[static_cast<size_t>(path_index)])] = RgbColor{
+                        static_cast<std::uint8_t>((static_cast<unsigned int>(primary.r) * level) / 255u),
+                        static_cast<std::uint8_t>((static_cast<unsigned int>(primary.g) * level) / 255u),
+                        static_cast<std::uint8_t>((static_cast<unsigned int>(primary.b) * level) / 255u)};
+                }
             }
             pattern.frames.push_back(frame);
         }
@@ -566,7 +627,7 @@ RgbPattern MakePreset(
 
     for (i = 0; i < static_cast<int>(motion_path.size()); ++i) {
         PatternFrame frame = MakeFrame(count, 75u, RgbColor{0u, 0u, 0u});
-        frame.leds[static_cast<size_t>(motion_path[static_cast<size_t>(i)])] = RgbColor{0u, 180u, 255u};
+        frame.leds[static_cast<size_t>(motion_path[static_cast<size_t>(i)])] = primary;
         pattern.frames.push_back(frame);
     }
     return pattern;

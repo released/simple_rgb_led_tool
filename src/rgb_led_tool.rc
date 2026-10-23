@@ -4,8 +4,8 @@
 IDR_MAINFRAME ICON "res\\p_tool.ico"
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,0,31
- PRODUCTVERSION 1,0,0,31
+ FILEVERSION 1,0,0,42
+ PRODUCTVERSION 1,0,0,42
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS VS_FF_DEBUG
@@ -22,11 +22,11 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Simple RGB LED Tool Team\0"
             VALUE "FileDescription", "Simple RGB LED Tool\0"
-            VALUE "FileVersion", "1.0.0.031\0"
+            VALUE "FileVersion", "1.0.0.042\0"
             VALUE "InternalName", "RgbLedTool.exe\0"
             VALUE "OriginalFilename", "RgbLedTool.exe\0"
             VALUE "ProductName", "Simple RGB LED Tool\0"
-            VALUE "ProductVersion", "1.0.0.031\0"
+            VALUE "ProductVersion", "1.0.0.042\0"
         END
     END
     BLOCK "VarFileInfo"

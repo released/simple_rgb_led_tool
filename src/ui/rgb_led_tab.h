@@ -41,8 +41,11 @@ protected:
     afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
     afx_msg void OnSize(UINT nType, int cx, int cy);
     afx_msg void OnTimer(UINT_PTR nIDEvent);
+    afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
     afx_msg void OnApplyLayout();
     afx_msg void OnLoadPreset();
+    afx_msg void OnChoosePatternColor();
+    afx_msg void OnChooseSecondColor();
     afx_msg void OnPathOptionChanged();
     afx_msg void OnFrameSelChanged();
     afx_msg void OnAddFrame();
@@ -62,6 +65,11 @@ protected:
     afx_msg void OnHelpPath();
     afx_msg void OnPlay();
     afx_msg void OnStop();
+    afx_msg void OnResetPattern();
+    afx_msg void OnCopyGeneratedCode();
+    afx_msg void OnSaveGeneratedCode();
+    afx_msg void OnPreviousFrame();
+    afx_msg void OnNextFrame();
     DECLARE_MESSAGE_MAP()
 
 private:
@@ -76,6 +84,9 @@ private:
     void UpdateSelectedFrameFields();
     void UpdateSelectedLedFields();
     void UpdatePlayState();
+    void UpdatePlaybackControls();
+    void UpdateAppliedStatus();
+    unsigned int PreviewIntervalMs() const;
     void ApplyCurrentLedCountAndShape();
     int SelectedFrameIndex() const;
     int SelectedLedIndex() const;
@@ -88,6 +99,7 @@ private:
     rgb_tool::core::LedPathMode SelectedPathMode() const;
     rgb_tool::core::LedOutputBackend SelectedBackend() const;
     rgb_tool::core::RgbColor ParseColorEdits() const;
+    rgb_tool::core::RgbColor ParseSecondColorEdits() const;
     rgb_tool::core::PatternFrame* CurrentFrame();
     const rgb_tool::core::PatternFrame* CurrentFrame() const;
     static std::wstring AnsiToWide(const char* text);
@@ -103,21 +115,26 @@ private:
     CFont small_font_;
 
     CButton group_;
+    CButton code_group_;
     CStatic led_count_title_;
     CEdit led_count_edit_;
     CStatic shape_title_;
     CComboBox shape_combo_;
     CButton apply_layout_btn_;
+    CStatic current_layout_value_;
 
     CStatic preset_title_;
     CComboBox preset_combo_;
     CButton load_preset_btn_;
+    CStatic current_preset_value_;
     CStatic symbol_title_;
     CEdit symbol_edit_;
     CButton symbol_help_btn_;
     CStatic backend_title_;
     CComboBox backend_combo_;
     CButton backend_help_btn_;
+    CButton copy_code_btn_;
+    CButton save_code_btn_;
     CStatic start_title_;
     CEdit start_edit_;
     CStatic direction_title_;
@@ -135,6 +152,13 @@ private:
     CEdit duration_edit_;
     CButton play_btn_;
     CButton stop_btn_;
+    CButton reset_pattern_btn_;
+    CButton previous_frame_btn_;
+    CButton next_frame_btn_;
+    CStatic playback_status_;
+    CSliderCtrl playback_slider_;
+    CStatic playback_speed_title_;
+    CComboBox playback_speed_combo_;
 
     CStatic led_title_;
     CComboBox led_combo_;
@@ -144,6 +168,20 @@ private:
     CEdit green_edit_;
     CStatic blue_title_;
     CEdit blue_edit_;
+    CButton choose_color_btn_;
+    CStatic color2_title_;
+    CEdit color2_red_edit_;
+    CEdit color2_green_edit_;
+    CEdit color2_blue_edit_;
+    CButton choose_color2_btn_;
+    CStatic tail_title_;
+    CEdit tail_edit_;
+    CStatic fade_title_;
+    CEdit fade_edit_;
+    CStatic spacing_title_;
+    CEdit spacing_edit_;
+    CStatic repeat_title_;
+    CEdit repeat_edit_;
     CButton apply_led_btn_;
     CButton fill_all_btn_;
     CButton clear_frame_btn_;
