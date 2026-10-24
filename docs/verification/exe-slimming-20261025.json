@@ -1,0 +1,178 @@
+{
+  "Date": "2026-10-25",
+  "Target": "Release|x64",
+  "Toolchain": "MSVC 14.44.35207",
+  "Candidate": [
+    {
+      "StartupMs": 437.0547,
+      "WorkflowMs": 15.860000000000001,
+      "CpuMs": 421.875,
+      "PeakBytes": 26320896
+    },
+    {
+      "StartupMs": 461.0747,
+      "WorkflowMs": 16.8079,
+      "CpuMs": 343.75,
+      "PeakBytes": 26365952
+    },
+    {
+      "StartupMs": 706.9096000000001,
+      "WorkflowMs": 20.2406,
+      "CpuMs": 468.75,
+      "PeakBytes": 26296320
+    },
+    {
+      "StartupMs": 608.7849,
+      "WorkflowMs": 21.9372,
+      "CpuMs": 500,
+      "PeakBytes": 26398720
+    },
+    {
+      "StartupMs": 540.1611,
+      "WorkflowMs": 16.8888,
+      "CpuMs": 500,
+      "PeakBytes": 26370048
+    }
+  ],
+  "OriginalExeBytes": 3228672,
+  "BaselineBytes": 3228672,
+  "FormalBytes": 1145856,
+  "BaselineSHA256": "1CAEF10CFA83CA069E50EA7333A97081BEB4815DDF25D405041630E8E42B9E0D",
+  "FormalSHA256": "A0024545E73638AEBA7BC2A8D5D141DBA48BE30A131636A3C08DB9E3E2AB69A7",
+  "RequiredFiles": [
+    "RgbLedTool.exe"
+  ],
+  "DeliveryBeforeBytes": 3228672,
+  "DeliveryAfterBytes": 1145856,
+  "Profile": "Startup",
+  "Samples": 5,
+  "Order": "baseline calibration before candidate; alternating AB/BA measured pairs",
+  "Limits": {
+    "StartupMs": {
+      "Median": 545.3632,
+      "MAD": 53.31979999999999,
+      "AllowedDelta": 160
+    },
+    "PeakBytes": {
+      "Median": 26791936,
+      "MAD": 4096,
+      "AllowedDelta": 1339597
+    },
+    "CpuMs": {
+      "Median": 421.875,
+      "MAD": 15.625,
+      "AllowedDelta": 47
+    },
+    "WorkflowMs": {
+      "Median": 15.5706,
+      "MAD": 2.526200000000001,
+      "AllowedDelta": 8
+    }
+  },
+  "Checks": [
+    {
+      "Metric": "StartupMs",
+      "BaselineMedian": 516.105,
+      "CandidateMedian": 540.1611,
+      "Limit": 676.105,
+      "Pass": true
+    },
+    {
+      "Metric": "PeakBytes",
+      "BaselineMedian": 26791936,
+      "CandidateMedian": 26365952,
+      "Limit": 28131533,
+      "Pass": true
+    },
+    {
+      "Metric": "CpuMs",
+      "BaselineMedian": 421.875,
+      "CandidateMedian": 468.75,
+      "Limit": 468.875,
+      "Pass": true
+    },
+    {
+      "Metric": "WorkflowMs",
+      "BaselineMedian": 16.7451,
+      "CandidateMedian": 16.8888,
+      "Limit": 24.7451,
+      "Pass": true
+    }
+  ],
+  "ControlShapePass": true,
+  "Calibration": [
+    {
+      "StartupMs": 656.5246000000001,
+      "WorkflowMs": 1.56,
+      "CpuMs": 437.5,
+      "PeakBytes": 26791936
+    },
+    {
+      "StartupMs": 545.3632,
+      "WorkflowMs": 18.0968,
+      "CpuMs": 421.875,
+      "PeakBytes": 26791936
+    },
+    {
+      "StartupMs": 598.683,
+      "WorkflowMs": 1.604,
+      "CpuMs": 531.25,
+      "PeakBytes": 26775552
+    },
+    {
+      "StartupMs": 510.762,
+      "WorkflowMs": 15.5706,
+      "CpuMs": 406.25,
+      "PeakBytes": 26804224
+    },
+    {
+      "StartupMs": 413.8686,
+      "WorkflowMs": 17.822100000000002,
+      "CpuMs": 390.625,
+      "PeakBytes": 26787840
+    }
+  ],
+  "Baseline": [
+    {
+      "StartupMs": 452.8109,
+      "WorkflowMs": 16.7451,
+      "CpuMs": 359.375,
+      "PeakBytes": 26796032
+    },
+    {
+      "StartupMs": 604.9528,
+      "WorkflowMs": 1.3551,
+      "CpuMs": 546.875,
+      "PeakBytes": 26763264
+    },
+    {
+      "StartupMs": 471.4316,
+      "WorkflowMs": 18.3394,
+      "CpuMs": 312.5,
+      "PeakBytes": 26791936
+    },
+    {
+      "StartupMs": 578.9821000000001,
+      "WorkflowMs": 19.7152,
+      "CpuMs": 421.875,
+      "PeakBytes": 26824704
+    },
+    {
+      "StartupMs": 516.105,
+      "WorkflowMs": 1.9376,
+      "CpuMs": 437.5,
+      "PeakBytes": 26787840
+    }
+  ],
+  "Clean": {
+    "Protected": 2,
+    "RemovedCompilerFiles": 29
+  },
+  "NotRun": [
+    "Physical devices/firmware",
+    "Visual/DPI",
+    "Clean-PC",
+    "Win32 builds"
+  ],
+  "AdditionalFix": null
+}

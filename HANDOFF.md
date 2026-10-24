@@ -1,5 +1,17 @@
 # HANDOFF
 
+## Verified x64 EXE slimming 2026-10-25
+
+- Canonical Release and isolated Debug builds, owned control/dialog/normal-close
+  checks and five alternating performance pairs PASS; no real INI/device/clipboard.
+- EXE 3228672 -> 1145856 bytes; required files 3228672 -> 1145856 bytes.
+- SHA-256: A0024545E73638AEBA7BC2A8D5D141DBA48BE30A131636A3C08DB9E3E2AB69A7.
+- Actual clean removed 29 compiler files; all 2 protected actual
+  files unchanged by SHA. Nested fixtures/help/idempotence PASS.
+- Raw sanitized samples/limits: docs/verification/exe-slimming-20261025.json.
+  Physical devices, firmware, visual/DPI/clean-PC/Win32 acceptance NOT RUN.
+- Ordinary publication commit/remote SHA: shared EXE_SLIMMING_PROGRESS.md.
+
 ## Rainbow Fill Animation Fix 2026-10-24
 
 - Rainbow Fill now updates every pattern frame and preserves each LED's

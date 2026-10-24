@@ -1,5 +1,36 @@
 # SELF_CHECK
 
+## Verified x64 EXE slimming 2026-10-25
+
+- PASS fresh comparable Release baseline 3228672 bytes (original delivery
+  3228672), formal 1145856. Required delivery 3228672 -> 1145856 bytes:
+  GUI EXE; optional/generated user settings are not bundled by this check.
+- Baseline SHA: 1CAEF10CFA83CA069E50EA7333A97081BEB4815DDF25D405041630E8E42B9E0D.
+- Formal SHA: A0024545E73638AEBA7BC2A8D5D141DBA48BE30A131636A3C08DB9E3E2AB69A7.
+- PASS canonical build_mfc.ps1 -Configuration Release -Platform x64
+  -CloseRunningTool $false; isolated MSBuild Debug with version prebuild disabled.
+  Zero reported compiler/linker warnings/errors; SDK informational defaults retained.
+- PASS authorized isolated actual-EXE tests: hash-matched fresh fixtures, identical
+  child-control class counts, owned common-dialog open/cancel, assertion-free Debug
+  startup/close and formal exit 0. No hardware, flash or clipboard actions.
+- Impact: unused x64 MFC registration only; /O2/static runtime/security PE 0x8160,
+  Win32 definitions, protocol/algorithm/firmware sources retained. Measure startup/control/UI paths, not bus throughput.
+- PASS paired gate: baseline warmups/calibration, five alternating AB/BA pairs,
+  no concurrent compilation. Before-candidate delta max(floor, 10% baseline median,
+  3*MAD); memory 5%; floors startup 25ms/UI 2ms/CPU 16ms/memory 1MiB.
+  All medians remain within baseline-derived observed variability:
+  - StartupMs: 516.1050 -> 540.1611, limit 676.1050.
+  - PeakBytes: 26791936.0000 -> 26365952.0000, limit 28131533.0000.
+  - CpuMs: 421.8750 -> 468.7500, limit 468.8750.
+  - WorkflowMs: 16.7451 -> 16.8888, limit 24.7451.
+- Raw samples/limits: docs/verification/exe-slimming-20261025.json.
+- PASS actual clean_mfc.bat: 29 compiler files removed, 2 protected actual
+  files SHA unchanged; 17 nested fixture files/source, help/idempotence PASS.
+  Unchanged earlier junction-rejection evidence is reused, not rerun. Personal
+  root INI hashes match the pre-build manifest without inspecting private values.
+- NOT RUN: physical devices/protocol, unrelated firmware, visual/DPI, clean-PC,
+  Win32 builds. No new driver/runtime, feature removal or global /O1 preset.
+
 ## Rainbow Fill Animation Fix 2026-10-24
 
 - Static check: PASS; Rainbow Fill transforms every frame and scales the

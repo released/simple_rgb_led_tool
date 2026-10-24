@@ -30,6 +30,13 @@ the tool closes. Invalid numeric values are clamped when loaded.
 The tool can generate backend-specific source bundles for Nuvoton BSP projects
 using LLSI, SPI, SPI + PDMA, or GPIO LED output.
 
+## Release size
+
+Release x64 EXE: 1145856 bytes (comparable baseline 3228672).
+Features, static runtime, required files and Win32 settings are retained.
+See SELF_CHECK.md and the sanitized [verification record](docs/verification/exe-slimming-20261025.json)
+for actual scope, measurements and limitations.
+
 ## Layout And Safe Clean
 
 Application source remains in `src`, automation in `scripts`, supporting guides
