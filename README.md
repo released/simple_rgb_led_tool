@@ -4,8 +4,8 @@ Windows MFC GUI tool for live USB HID control, editing RGB LED patterns, and gen
 
 The primary `Control` tab connects to the companion M032TD2AE USB HID
 firmware. It controls 1-10 WS2812 (GRB) or LTST-E563CEGBW (RGB) LEDs,
-brightness, static color, breathing, blink, gradient, and flow. The existing
-editor and code generator are retained in the compact `Pattern / Code` tab.
+brightness, static color, breathing, blink, gradient, and flow. The
+`Pattern / Code` tab provides the editor and code generator.
 While connected, the tool checks device presence every 500 ms. Unplugging the
 USB cable closes the stale HID handle, changes Status to `Disconnected`, and
 re-enables the Connect button without requiring a failed command first.
@@ -22,7 +22,7 @@ Blink maps it to approximately 1070-50 ms per on/off transition.
 `Reset RGB / Speed` restores RGB to `255,80,0` and Speed to `128` without
 changing the selected effect, direction, brightness, or strip configuration.
 
-The portable `build\rgb_led_tool.ini` now stores the Control tab LED count,
+The portable `build\rgb_led_tool.ini` stores the Control tab LED count,
 wire order, brightness, effect, RGB, speed, and direction in `[CONTROL]`.
 Settings are loaded at startup and saved by `Save INI` or automatically when
 the tool closes. Invalid numeric values are clamped when loaded.
@@ -30,21 +30,6 @@ the tool closes. Invalid numeric values are clamped when loaded.
 The tool can generate backend-specific source bundles for Nuvoton BSP projects
 using LLSI, SPI, SPI + PDMA, or GPIO LED output.
 
-## Release size
-
-Release x64 EXE: 1145856 bytes (comparable baseline 3228672).
-Features, static runtime, required files and Win32 settings are retained.
-See SELF_CHECK.md and the sanitized [verification record](docs/verification/exe-slimming-20261025.json)
-for actual scope, measurements and limitations.
-
-## Layout And Safe Clean
-
-Application source remains in `src`, automation in `scripts`, supporting guides
-in `docs`, and delivery/runtime files in `build`. Existing firmware/vendor
-trees retain their working paths. `scripts/clean_mfc.bat` removes allowlisted
-compiler files only, rejects reparse-point traversal before deletion, and
-retains EXE/INI/DLL/data/log/unknown files even inside nested output folders.
-A folder name such as `tests` or `obj` is not permission to erase its contents.
 
 ## Current Scope
 
@@ -202,7 +187,7 @@ See `docs\RGB_PATTERN_FORMAT.md`.
 
 ## MCU Pattern Direction
 
-The reviewed BSP `led_effect.c` is mostly function-driven and blocking. That is good for demos, but difficult for a GUI to generate safely. The recommended path is:
+To integrate the generated pattern player into a BSP:
 
 1. Generate backend-specific files with an explicit prefix such as `llsi_`, `spi_`, `spi_pdma_`, or `gpio_`.
 2. Keep peripheral packing and transfer in `<backend>_led_pattern_drv.c`.
