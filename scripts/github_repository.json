@@ -1,0 +1,14 @@
+{
+  "publication_enabled": true,
+  "repository": "released/simple_rgb_led_tool",
+  "visibility": "PUBLIC",
+  "branch": "main",
+  "readme_title": "Simple RGB LED Tool",
+  "identity_files": [
+    "README.md",
+    "RgbLedTool.vcxproj"
+  ],
+  "delivery_files": [
+    "build/RgbLedTool.exe"
+  ]
+}
