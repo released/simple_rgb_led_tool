@@ -98,6 +98,10 @@ bool HidDevice::IsConnected() {
 }
 
 bool HidDevice::Send(Command command, const std::uint8_t* payload, std::uint8_t length, std::wstring* error) {
+    if (length > kMaxPayloadSize || (length != 0u && payload == nullptr)) {
+        if (error) *error = L"Invalid HID payload (maximum 58 bytes).";
+        return false;
+    }
     if (!IsOpen()) { if (error) *error = L"USB HID device is not connected."; return false; }
     const auto report = MakeReport(command, ++sequence_, payload, length);
     std::array<std::uint8_t, kReportSize + 1> wire{};

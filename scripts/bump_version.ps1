@@ -1,10 +1,10 @@
 param(
     [string]$RcPath = "",
     [string]$HeaderPath = "",
-    [int]$MaxRevision = 999,
-    [int]$MaxPatch = 9,
-    [int]$MaxMinor = 9,
-    [int]$MaxMajor = 9
+    [ValidateRange(1,999)][int]$MaxRevision = 999,
+    [ValidateRange(0,9)][int]$MaxPatch = 9,
+    [ValidateRange(0,9)][int]$MaxMinor = 9,
+    [ValidateRange(0,9)][int]$MaxMajor = 9
 )
 
 $ErrorActionPreference = "Stop"
@@ -39,6 +39,10 @@ $major = [int]$m.Groups[1].Value
 $minor = [int]$m.Groups[2].Value
 $patch = [int]$m.Groups[3].Value
 $rev = [int]$m.Groups[4].Value
+
+if ($major -gt $MaxMajor -or $minor -gt $MaxMinor -or $patch -gt $MaxPatch -or $rev -gt $MaxRevision) {
+    Fail 'Existing FILEVERSION is outside the supported version bounds.'
+}
 
 $rev = $rev + 1
 if ($rev -gt $MaxRevision) {

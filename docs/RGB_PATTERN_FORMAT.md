@@ -21,6 +21,24 @@ Fields:
 
 `start_index`, `direction`, and `path_mode` are optional for older files. Missing fields load as `0`, `Forward`, and `Loop`.
 
+Limits and validation:
+
+- Up to 4 MiB per input file and 4096 frames per pattern.
+- Each frame has exactly `led_count` valid RGB tokens. Missing, extra, or invalid
+  tokens reject the load and preserve the previously accepted pattern.
+- Frame indices are consecutive from zero. A missing duration uses 80 ms;
+  numeric durations retain the existing clamping to 1..60000 ms.
+- LED count retains the existing clamping to 1..64. Start indices retain modulo
+  normalization. Numeric overflow and unsupported versions/layout values are rejected.
+- Names are single-line text, up to 255 characters. New output is UTF-8; loading
+  accepts UTF-8 (with optional BOM) and legacy Windows ANSI files.
+- Preview speed and playback position affect only the display. Export uses the
+  complete accepted pattern and its original frame durations.
+
+Output files are written through unique sibling staging files. All files in a
+source bundle are prepared before any replacement. A bundle is not a filesystem
+transaction: a commit failure reports how many files were already updated.
+
 Example:
 
 ```text

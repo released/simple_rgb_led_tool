@@ -141,6 +141,8 @@
     <ClCompile Include="src\config\ini_manager.cpp" />
     <ClCompile Include="src\core\app_state.cpp" />
     <ClCompile Include="src\core\rgb_pattern.cpp" />
+    <ClCompile Include="src\core\rgb_pattern_codegen.cpp" />
+    <ClCompile Include="src\core\rgb_pattern_file.cpp" />
     <ClCompile Include="src\core\text_utils.cpp" />
     <ClCompile Include="src\log\logger.cpp" />
     <ClCompile Include="src\services\hid_device.cpp" />

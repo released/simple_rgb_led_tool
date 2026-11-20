@@ -643,8 +643,12 @@ void CRgbLedTab::LoadState(const rgb_tool::core::AppState& state) {
     const int start_index = rgb_tool::core::ClampInt(ParseIntOr(state.pattern.start_index, 0), 0, count - 1);
     const rgb_tool::core::LedDirection direction = rgb_tool::core::ParseDirectionName(state.pattern.direction);
     const rgb_tool::core::LedPathMode path_mode = rgb_tool::core::ParsePathModeName(state.pattern.path_mode);
-    const std::wstring preset = state.pattern.preset.empty() ? L"Moving Dot" : state.pattern.preset;
+    const std::vector<std::wstring> presets = rgb_tool::core::PresetNames();
+    const std::wstring preset = std::find(presets.begin(), presets.end(), state.pattern.preset) != presets.end()
+        ? state.pattern.preset : L"Moving Dot";
 
+    const bool was_updating = updating_ui_;
+    updating_ui_ = true;
     SetControlText(led_count_edit_, std::to_wstring(count));
     shape_combo_.SetCurSel(static_cast<int>(shape));
     SetControlText(symbol_edit_, state.pattern.symbol_name.empty() ? L"g_rgb_pattern" : state.pattern.symbol_name);
@@ -663,6 +667,7 @@ void CRgbLedTab::LoadState(const rgb_tool::core::AppState& state) {
         const int found = preset_combo_.FindStringExact(-1, preset.c_str());
         preset_combo_.SetCurSel(found == CB_ERR ? 0 : found);
     }
+    updating_ui_ = was_updating;
     SetPattern(rgb_tool::core::MakePreset(preset, count, shape, start_index, direction, path_mode), 0);
 }
 
@@ -709,6 +714,17 @@ bool CRgbLedTab::SavePatternToFile(const std::wstring& path, std::wstring* error
 
 bool CRgbLedTab::SaveGeneratedCodeToFolder(const std::wstring& directory, std::wstring* error) const {
     const auto files = rgb_tool::core::GenerateSourceFiles(pattern_, GetControlText(symbol_edit_), SelectedBackend());
+    for (const auto& file : files) {
+        const std::wstring path = directory + L"\\" + file.file_name;
+        if (GetFileAttributesW(path.c_str()) != INVALID_FILE_ATTRIBUTES) {
+            if (::MessageBoxW(GetSafeHwnd(), L"Replace the existing generated source files in this folder?", L"Save Code",
+                            MB_YESNO | MB_DEFBUTTON2 | MB_ICONQUESTION) != IDYES) {
+                if (error != nullptr) *error = L"Code export cancelled; existing files were preserved.";
+                return false;
+            }
+            break;
+        }
+    }
     return rgb_tool::core::SaveGeneratedSourceFiles(directory, files, error);
 }
 
@@ -769,11 +785,14 @@ void CRgbLedTab::SetPattern(rgb_tool::core::RgbPattern pattern, int frame_index)
     pattern_ = std::move(pattern);
     rgb_tool::core::EnsurePatternShape(&pattern_, pattern_.led_count, pattern_.shape);
     current_frame_ = rgb_tool::core::ClampInt(frame_index, 0, static_cast<int>(pattern_.frames.size()) - 1);
+    const bool was_updating = updating_ui_;
+    updating_ui_ = true;
     SetControlText(led_count_edit_, std::to_wstring(pattern_.led_count));
     shape_combo_.SetCurSel(static_cast<int>(pattern_.shape));
     SetControlText(start_edit_, std::to_wstring(pattern_.start_index));
     direction_combo_.SetCurSel(static_cast<int>(pattern_.direction));
     path_mode_combo_.SetCurSel(static_cast<int>(pattern_.path_mode));
+    updating_ui_ = was_updating;
     UpdateAllViews();
 }
 
@@ -1016,7 +1035,7 @@ std::wstring CRgbLedTab::AnsiToWide(const char* text) {
 }
 
 void CRgbLedTab::OnTimer(UINT_PTR nIDEvent) {
-    if (nIDEvent != kPreviewTimerId || pattern_.frames.empty()) {
+    if (nIDEvent != kPreviewTimerId || !playing_ || pattern_.frames.empty()) {
         CWnd::OnTimer(nIDEvent);
         return;
     }
@@ -1130,6 +1149,10 @@ void CRgbLedTab::OnFrameSelChanged() {
 }
 
 void CRgbLedTab::OnAddFrame() {
+    if (pattern_.frames.size() >= rgb_tool::core::kMaxPatternFrames) {
+        MessageBoxW(L"A pattern can contain at most 4096 frames.", L"Add Frame", MB_OK | MB_ICONINFORMATION);
+        return;
+    }
     rgb_tool::core::PatternFrame frame;
     frame.duration_ms = rgb_tool::core::kDefaultFrameDurationMs;
     frame.leds.assign(static_cast<size_t>(pattern_.led_count), rgb_tool::core::RgbColor{});
@@ -1142,6 +1165,10 @@ void CRgbLedTab::OnAddFrame() {
 }
 
 void CRgbLedTab::OnDuplicateFrame() {
+    if (pattern_.frames.size() >= rgb_tool::core::kMaxPatternFrames) {
+        MessageBoxW(L"A pattern can contain at most 4096 frames.", L"Duplicate Frame", MB_OK | MB_ICONINFORMATION);
+        return;
+    }
     const rgb_tool::core::PatternFrame* frame = CurrentFrame();
     if (frame == nullptr) {
         return;

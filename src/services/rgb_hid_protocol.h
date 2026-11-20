@@ -2,6 +2,7 @@
 
 #include <array>
 #include <cstdint>
+#include <stdexcept>
 
 namespace rgb_tool::hid {
 
@@ -11,6 +12,7 @@ constexpr std::uint8_t kMagic = 0xA5;
 constexpr std::uint8_t kProtocolVersion = 1;
 constexpr std::size_t kReportSize = 64;
 constexpr std::size_t kPayloadOffset = 5;
+constexpr std::size_t kMaxPayloadSize = kReportSize - kPayloadOffset - 1u;
 
 enum class Command : std::uint8_t {
     GetInfo = 0x01,
@@ -44,7 +46,9 @@ inline std::uint8_t Crc8(const std::uint8_t* data, std::size_t length) {
 inline std::array<std::uint8_t, kReportSize> MakeReport(Command command, std::uint8_t sequence,
                                                         const std::uint8_t* payload, std::uint8_t length) {
     std::array<std::uint8_t, kReportSize> report{};
-    if (length > kReportSize - kPayloadOffset - 1) length = static_cast<std::uint8_t>(kReportSize - kPayloadOffset - 1);
+    if (length > kMaxPayloadSize || (length != 0u && payload == nullptr)) {
+        throw std::invalid_argument("Invalid HID payload length or pointer");
+    }
     report[0] = kMagic;
     report[1] = kProtocolVersion;
     report[2] = static_cast<std::uint8_t>(command);

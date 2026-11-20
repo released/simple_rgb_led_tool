@@ -45,6 +45,8 @@
     <ClCompile Include="src\config\ini_manager.cpp"><Filter>Source Files\config</Filter></ClCompile>
     <ClCompile Include="src\core\app_state.cpp"><Filter>Source Files\core</Filter></ClCompile>
     <ClCompile Include="src\core\rgb_pattern.cpp"><Filter>Source Files\core</Filter></ClCompile>
+    <ClCompile Include="src\core\rgb_pattern_codegen.cpp"><Filter>Source Files\core</Filter></ClCompile>
+    <ClCompile Include="src\core\rgb_pattern_file.cpp"><Filter>Source Files\core</Filter></ClCompile>
     <ClCompile Include="src\core\text_utils.cpp"><Filter>Source Files\core</Filter></ClCompile>
     <ClCompile Include="src\log\logger.cpp"><Filter>Source Files\log</Filter></ClCompile>
     <ClCompile Include="src\ui\rgb_led_tab.cpp"><Filter>Source Files\ui</Filter></ClCompile>

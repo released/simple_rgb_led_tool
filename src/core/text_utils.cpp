@@ -1,6 +1,7 @@
 #include "text_utils.h"
 
 #include <cwctype>
+#include <limits>
 #include <stdexcept>
 
 namespace rgb_tool::core {
@@ -10,7 +11,7 @@ int ParseInt(const std::wstring& text) {
     size_t idx = 0;
     int base = 10;
     int sign = 1;
-    long long value = 0;
+    unsigned int value = 0u;
 
     for (wchar_t ch : text) {
         if (!iswspace(ch)) {
@@ -21,14 +22,17 @@ int ParseInt(const std::wstring& text) {
         throw std::invalid_argument("empty integer string");
     }
 
-    if (s.size() > 2u && s[0] == L'0' && (s[1] == L'x' || s[1] == L'X')) {
-        base = 16;
-        idx = 2u;
-    }
-    if (idx < s.size() && s[idx] == L'-') {
-        sign = -1;
+    if (s[idx] == L'-' || s[idx] == L'+') {
+        sign = s[idx] == L'-' ? -1 : 1;
         ++idx;
     }
+    if (s.size() >= idx + 2u && s[idx] == L'0' && (s[idx + 1u] == L'x' || s[idx + 1u] == L'X')) {
+        base = 16;
+        idx += 2u;
+    }
+    if (idx == s.size()) throw std::invalid_argument("integer has no digits");
+    const unsigned int limit = static_cast<unsigned int>((std::numeric_limits<int>::max)()) +
+                               (sign < 0 ? 1u : 0u);
 
     for (; idx < s.size(); ++idx) {
         wchar_t ch = s[idx];
@@ -45,10 +49,14 @@ int ParseInt(const std::wstring& text) {
         if (digit >= base) {
             throw std::invalid_argument("invalid digit for base");
         }
-        value = value * base + digit;
+        if (value > (limit - static_cast<unsigned int>(digit)) / static_cast<unsigned int>(base)) {
+            throw std::out_of_range("integer overflow");
+        }
+        value = value * static_cast<unsigned int>(base) + static_cast<unsigned int>(digit);
     }
 
-    return static_cast<int>(value * sign);
+    if (sign < 0 && value == limit) return (std::numeric_limits<int>::min)();
+    return sign < 0 ? -static_cast<int>(value) : static_cast<int>(value);
 }
 
 int ClampInt(int value, int low, int high) {

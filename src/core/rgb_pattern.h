@@ -10,6 +10,9 @@ constexpr int kMinLedCount = 1;
 constexpr int kMaxLedCount = 64;
 constexpr int kDefaultLedCount = 24;
 constexpr int kDefaultFrameDurationMs = 80;
+constexpr std::size_t kMaxPatternFrames = 4096u;
+constexpr std::size_t kMaxPatternFileBytes = 4u * 1024u * 1024u;
+constexpr std::size_t kMaxPatternNameLength = 255u;
 
 enum class LedShape {
     Line = 0,
@@ -90,6 +93,7 @@ RgbPattern MakePreset(
     int repeat_count = 1
 );
 void EnsurePatternShape(RgbPattern* pattern, int led_count, LedShape shape);
+bool ValidatePattern(const RgbPattern& pattern, std::wstring* error);
 void ApplyPatternPathSettings(
     RgbPattern* pattern,
     int start_index,
